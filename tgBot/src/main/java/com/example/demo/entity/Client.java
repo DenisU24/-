@@ -6,6 +6,7 @@ import jakarta.persistence.Id;
 
 import javax.annotation.processing.Generated;
 
+
 @Entity
 public class Client {
 
