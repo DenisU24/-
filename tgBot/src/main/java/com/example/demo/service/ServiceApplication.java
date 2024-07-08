@@ -6,9 +6,11 @@ import com.example.demo.entity.Product;
 import com.example.demo.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -46,9 +48,16 @@ public class ServiceApplication implements EntitiesService {
     }
 
     @Override
-    public List<Product> getTopPopularProducts(Integer limit) {
-        return orderProductRepository.findTopPopularProducts(PageRequest.of(0, limit));
+public List<Product> getTopPopularProducts(Integer limit) {
+    Pageable pageable = PageRequest.of(0, limit);
+    List<Object[]> results = productRepository.findTopPopularProducts(pageable);
+    List<Product> products = new ArrayList<>();
+    for (Object[] result : results) {
+        products.add((Product) result[0]);
     }
+    return products;
+}
+
 
     @Override
     public List<Client> searchClientsByName(String name) {

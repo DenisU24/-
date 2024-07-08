@@ -12,7 +12,5 @@ import java.util.List;
 
 @RepositoryRestResource(collectionResourceRel = "orderProducts", path = "orderProducts")
 public interface OrderProductRepository extends JpaRepository<OrderProduct, Long> {
-    @Query("SELECT op.product FROM OrderProduct op GROUP BY op.product ORDER BY COUNT(op.product) DESC")
-    List<Product> findTopPopularProducts(Pageable pageable);
 
 }

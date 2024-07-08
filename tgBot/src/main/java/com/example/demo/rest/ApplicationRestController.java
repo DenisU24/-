@@ -39,5 +39,4 @@ public class ApplicationRestController {
     public List<Product> getTopPopularProducts(@RequestParam Integer limit) {
         return entitiesService.getTopPopularProducts(limit);
     }
-
 }
