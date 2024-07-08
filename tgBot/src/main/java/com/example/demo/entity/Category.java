@@ -6,6 +6,16 @@ import jakarta.persistence.*;
 @Entity
 public class Category {
 
+    @Id
+    @GeneratedValue
+    private Long id;
+
+    @Column(nullable = false, unique = true,  length = 50)
+    private String name;
+
+    @ManyToOne(optional = true)
+    private Category parent;
+
     public Long getId() {
         return id;
     }
@@ -29,15 +39,5 @@ public class Category {
     public void setParent(Category parent) {
         this.parent = parent;
     }
-
-    @Id
-    @GeneratedValue
-    private Long id;
-
-    @Column(nullable = false, unique = true, length = 50)
-    private String name;
-
-    @ManyToOne
-    private Category parent;
 
 }

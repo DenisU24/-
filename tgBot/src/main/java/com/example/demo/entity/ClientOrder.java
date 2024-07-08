@@ -8,6 +8,19 @@ import java.math.BigDecimal;
 @Entity
 public class ClientOrder {
 
+    @Id
+    @GeneratedValue
+    private Long id;
+
+    @ManyToOne(optional = false)
+    private Client client;
+
+    @Column(nullable = false)
+    private Integer status;
+
+    @Column(nullable = false, precision = 15, scale = 2)
+    private BigDecimal total;
+
     public Long getId() {
         return id;
     }
@@ -39,17 +52,4 @@ public class ClientOrder {
     public void setTotal(BigDecimal total) {
         this.total = total;
     }
-
-    @Id
-    @GeneratedValue
-    private Long id;
-
-    @ManyToOne
-    private Client client;
-
-    @Column(nullable = false)
-    private Integer status;
-
-    @Column(nullable = false, precision = 15, scale = 2)
-    private BigDecimal total;
 }

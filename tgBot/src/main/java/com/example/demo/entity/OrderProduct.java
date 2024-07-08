@@ -6,6 +6,19 @@ import jakarta.persistence.*;
 @Entity
 public class OrderProduct {
 
+    @Id
+    @GeneratedValue
+    private Long id;
+
+    @ManyToOne(optional = false)
+    private ClientOrder clientOrder;
+
+    @ManyToOne(optional = false)
+    private Product product;
+
+    @Column(nullable = false)
+    private Integer countProduct;
+
     public Long getId() {
         return id;
     }
@@ -37,17 +50,4 @@ public class OrderProduct {
     public void setCountProduct(Integer countProduct) {
         this.countProduct = countProduct;
     }
-
-    @Id
-    @GeneratedValue
-    private Long id;
-
-    @ManyToOne
-    private ClientOrder clientOrder;
-
-    @ManyToOne
-    private Product product;
-
-    @Column(nullable = false)
-    private Integer countProduct;
 }

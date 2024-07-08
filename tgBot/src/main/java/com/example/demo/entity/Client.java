@@ -1,4 +1,5 @@
 package com.example.demo.entity;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -9,6 +10,22 @@ import javax.annotation.processing.Generated;
 
 @Entity
 public class Client {
+
+    @Id
+    @GeneratedValue
+    private Long id;
+
+    @Column(nullable = false)
+    private Long externalId;
+
+    @Column(nullable = false, length = 255)
+    private String fullName;
+
+    @Column(nullable = false, length = 15)
+    private String phoneNumber;
+
+    @Column(nullable = false, length = 400)
+    private String address;
 
     public Long getId() {
         return id;
@@ -49,20 +66,4 @@ public class Client {
     public void setAddress(String address) {
         this.address = address;
     }
-
-    @Id
-    @GeneratedValue
-    private Long id;
-
-    @Column(nullable=false)
-    private Long externalId;
-
-    @Column(nullable = false, length = 255)
-    private String fullName;
-
-    @Column(nullable = false, length = 15)
-    private String phoneNumber;
-
-    @Column(nullable = false, length = 400)
-    private String address;
 }
