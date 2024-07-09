@@ -11,5 +11,4 @@ import java.util.List;
         "clients", path = "clients")
 
 public interface ClientRepository extends JpaRepository<Client, Long> {
-    List<Client> findByFullNameContaining(String fullName);
 }

@@ -8,7 +8,7 @@ import java.util.List;
 /**
  * Сервис для работы с сущностями телеграмм-бота
  */
-public interface EntitiesService
+public interface AppService
 {
     /**
      * Получить список товаров в категории
