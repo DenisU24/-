@@ -54,11 +54,7 @@ public class AppServiceImpl implements AppService {
     @Override
     public List<Product> getTopPopularProducts(Integer limit) {
         Pageable pageable = PageRequest.of(0, limit);
-        List<Object[]> results = productRepository.findTopPopularProducts(pageable);
-        List<Product> products = new ArrayList<>();
-        for (Object[] result : results) {
-            products.add((Product) result[0]);
-        }
-        return products;
+        return productRepository.findTopPopularProducts(pageable);
     }
+
 }

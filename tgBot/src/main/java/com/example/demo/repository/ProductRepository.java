@@ -15,16 +15,13 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
 
     List<Product> findByCategoryId(Long id);
 
-    @Query("select op.product from OrderProduct op" +
-            "join op.clientOrder co" +
+    @Query("select op.product from OrderProduct op " +
+            "join op.clientOrder co " +
             "where co.client.id = :clientId")
-
     List<Product> findProductsByClientId(@Param("clientId") Long clientId);
 
-    @Query("SELECT op.product, SUM(op.countProduct) as total FROM OrderProduct" +
-            "op GROUP BY op.product" +
-            "ORDER BY total DESC")
-
-    List<Object[]> findTopPopularProducts(Pageable pageable);
-
+    @Query("SELECT op.product FROM OrderProduct op " +
+            "GROUP BY op.product " +
+            "ORDER BY SUM(op.countProduct) DESC")
+    List<Product> findTopPopularProducts(Pageable pageable);
 }
