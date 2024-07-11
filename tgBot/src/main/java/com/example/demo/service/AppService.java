@@ -1,18 +1,18 @@
 package com.example.demo.service;
 
-<<<<<<< HEAD
+
 import com.example.demo.entity.Client;
 import com.example.demo.entity.ClientOrder;
 import com.example.demo.entity.Product;
 
 import java.util.List;
-=======
+
 import com.example.demo.entity.*;
 
 import java.util.List;
 import java.util.Optional;
 
->>>>>>> practical_task_5_1
+
 /**
  * Сервис для работы с сущностями телеграмм-бота
  */
@@ -56,7 +56,9 @@ public interface AppService
 
     Optional<Client> findClientByExternalId(Long externalId);
 
-    Client saveClient(Client client);
+    Client saveNewClient(Long chatId, String fullName);
+
+    Client updateExistingClient(Client client);
 
     ClientOrder saveClientOrder(ClientOrder clientOrder);
 

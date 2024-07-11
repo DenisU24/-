@@ -68,7 +68,26 @@ public class AppServiceImpl implements AppService {
     }
 
     @Override
-    public Client saveClient(Client client) {
+    public Client saveNewClient(Long chatId, String fullName) {
+        Client client = new Client();
+        client.setExternalId(chatId);
+        client.setFullName(fullName);
+        client.setPhoneNumber("Не указано");
+        client.setAddress("Не указано");
+
+        return saveClient(client); // Сохраняем нового клиента
+    }
+
+    @Override
+    public Client updateExistingClient(Client client) {
+        // Обновляем существующего клиента
+        return saveClient(client);
+    }
+
+    // Метод для сохранения клиента (нового или обновленного)
+    private Client saveClient(Client client) {
+        // Логика сохранения клиента в базе данных
+        // Например, с использованием репозитория:
         return clientRepository.save(client);
     }
 

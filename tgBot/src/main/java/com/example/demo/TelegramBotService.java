@@ -27,13 +27,20 @@ import java.util.*;
 
 @Component
 public class TelegramBotService {
-
     private final AppService appService;
     private final TelegramBot bot;
     private final ProductRepository productRepository;
     private final OrderProductRepository orderProductRepository;
-    private final Map<Long, Integer> userStates = new HashMap<>();
+    private final Map<Long, UserState> userStates = new HashMap<>();
     private final Map<Long, Integer> userOrders = new HashMap<>();
+    public static final Integer STATUS_ACTIVE = 1;
+    public static final Integer STATUS_CLOSED = 2;
+
+    public enum UserState {
+        INPUT_NAME,
+        INPUT_PHONE,
+        INPUT_ADDRESS
+    }
 
     @Autowired
     public TelegramBotService(AppService appService, TelegramBot bot,
@@ -66,27 +73,27 @@ public class TelegramBotService {
 
         // Проверка, находится ли пользователь на стадии ввода данных
         if (userStates.containsKey(chatId)) {
-            int state = userStates.get(chatId);
+            UserState state = userStates.get(chatId);
             Optional<Client> clientOptional = appService.findClientByExternalId(chatId);
             if (clientOptional.isPresent()) {
                 Client client = clientOptional.get();
-                if (state == 0) {
+                if (state == UserState.INPUT_NAME) {
                     client.setFullName(text);
                     bot.execute(new SendMessage(chatId, "Введите ваш номер телефона:"));
-                    userStates.put(chatId, 1);
-                } else if (state == 1) {
+                    userStates.put(chatId, UserState.INPUT_PHONE);
+                } else if (state == UserState.INPUT_PHONE) {
                     client.setPhoneNumber(text);
                     bot.execute(new SendMessage(chatId, "Введите ваш адрес:"));
-                    userStates.put(chatId, 2);
-                } else if (state == 2) {
+                    userStates.put(chatId, UserState.INPUT_ADDRESS);
+                } else if (state == UserState.INPUT_ADDRESS) {
                     client.setAddress(text);
-                    appService.saveClient(client);
+                    appService.updateExistingClient(client);
                     bot.execute(new SendMessage(chatId, "Спасибо! Ваши данные сохранены."));
                     sendMainMenu(chatId);
-                    userStates.remove(chatId);
                 }
             } else {
-                bot.execute(new SendMessage(chatId, "Что-то пошло не так. Пожалуйста, попробуйте еще раз позже."));
+                bot.execute(new SendMessage(chatId, "Что-то пошло не так. Попробуйте еще раз запустить бота: /start"));
+                userStates.remove(chatId);
             }
         } else {
             // Обработка сообщений
@@ -109,29 +116,22 @@ public class TelegramBotService {
         }
     }
 
+
     private void handleStartCommand(Long chatId, Message message) {
         String fullName = message.from().firstName();
 
         // Проверка, существует ли клиент
         Optional<Client> clientOptional = appService.findClientByExternalId(chatId);
-        Client client;
         if (clientOptional.isEmpty()) {
             // Создание нового клиента
-            client = new Client();
-            client.setExternalId(chatId);
-            client.setFullName(fullName);
-            client.setPhoneNumber("Не указано");
-            client.setAddress("Не указано");
-
-            client = appService.saveClient(client);
+            Client client = appService.saveNewClient(chatId, fullName);
 
             // Приветственное сообщение
             bot.execute(new SendMessage(chatId, "Добро пожаловать, " + fullName + "! Пожалуйста, введите свои данные для создания заказа."));
             bot.execute(new SendMessage(chatId, "Введите ваш полное имя:"));
 
-            userStates.put(chatId, 0);
+            userStates.put(chatId, UserState.INPUT_NAME);
         } else {
-            client = clientOptional.get();
             sendMainMenu(chatId);
         }
     }
@@ -167,7 +167,7 @@ public class TelegramBotService {
     private List<OrderProduct> getOrderProductsForActiveOrder(Client client) {
         List<ClientOrder> orders = appService.getClientOrders(client.getId());
         return orders.stream()
-                .filter(order -> order.getStatus() == 1) // Фильтрация активных заказов
+                .filter(order -> order.getStatus() == STATUS_ACTIVE) // Фильтрация активных заказов
                 .findFirst()
                 .map(order -> appService.getProductsByClientOrder(order.getId()))
                 .orElse(new ArrayList<>());
@@ -182,10 +182,10 @@ public class TelegramBotService {
     private void closeActiveOrder(Client client) {
         List<ClientOrder> orders = appService.getClientOrders(client.getId());
         orders.stream()
-                .filter(order -> order.getStatus() == 1)
+                .filter(order -> order.getStatus() == STATUS_ACTIVE)
                 .findFirst()
                 .ifPresent(order -> {
-                    order.setStatus(2); // Статус "Закрыт"
+                    order.setStatus(STATUS_CLOSED); // Статус "Закрыт"
                     appService.saveClientOrder(order);
                 });
     }
@@ -218,7 +218,7 @@ public class TelegramBotService {
     private ClientOrder createNewActiveOrder(Client client) {
         ClientOrder newOrder = new ClientOrder();
         newOrder.setClient(client);
-        newOrder.setStatus(1); // Статус "Создан"
+        newOrder.setStatus(STATUS_ACTIVE); // Статус "Создан"
         newOrder.setTotal(BigDecimal.ZERO);
 
         return appService.saveClientOrder(newOrder);
@@ -373,7 +373,7 @@ public class TelegramBotService {
                 Client client = clientOptional.get();
                 List<ClientOrder> orders = appService.getClientOrders(client.getId());
                 ClientOrder activeOrder = orders.stream()
-                        .filter(order -> order.getStatus() == 1)
+                        .filter(order -> order.getStatus() == STATUS_ACTIVE)
                         .findFirst()
                         .orElseGet(() -> createNewClientOrder(client));
 
@@ -398,7 +398,7 @@ public class TelegramBotService {
     private ClientOrder createNewClientOrder(Client client) {
         ClientOrder clientOrder = new ClientOrder();
         clientOrder.setClient(client);
-        clientOrder.setStatus(1); // Статус "Создан"
+        clientOrder.setStatus(STATUS_ACTIVE); // Статус "Создан"
         clientOrder.setTotal(BigDecimal.ZERO);
 
         return appService.saveClientOrder(clientOrder);
