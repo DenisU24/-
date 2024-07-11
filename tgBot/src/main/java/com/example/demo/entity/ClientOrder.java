@@ -52,5 +52,4 @@ public class ClientOrder {
     public void setTotal(BigDecimal total) {
         this.total = total;
     }
-
 }

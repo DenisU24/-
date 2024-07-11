@@ -126,8 +126,6 @@ public class FillingTest {
         }
     }
 
-
-    
     void createClientsAndOrders() {
         // Создаем тестовые данные
         for (int i = 0; i < 5; i++) {
