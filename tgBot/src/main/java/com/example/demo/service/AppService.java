@@ -1,10 +1,18 @@
 package com.example.demo.service;
 
+<<<<<<< HEAD
 import com.example.demo.entity.Client;
 import com.example.demo.entity.ClientOrder;
 import com.example.demo.entity.Product;
 
 import java.util.List;
+=======
+import com.example.demo.entity.*;
+
+import java.util.List;
+import java.util.Optional;
+
+>>>>>>> practical_task_5_1
 /**
  * Сервис для работы с сущностями телеграмм-бота
  */
@@ -45,4 +53,19 @@ public interface AppService
     default List<Product> searchProductsByName(String name) {
         throw new UnsupportedOperationException("Доп. задание");
     }
+
+    Optional<Client> findClientByExternalId(Long externalId);
+
+    Client saveClient(Client client);
+
+    ClientOrder saveClientOrder(ClientOrder clientOrder);
+
+    List<Category> getMainCategories();
+
+    List<Category> getSubCategories(Long parentId);
+
+    Optional<Category> findCategoryByName(String name);
+
+    List<OrderProduct> getProductsByClientOrder(Long orderId);
+
 }

@@ -13,4 +13,6 @@ import java.util.List;
 @RepositoryRestResource(collectionResourceRel = "orderProducts", path = "orderProducts")
 public interface OrderProductRepository extends JpaRepository<OrderProduct, Long> {
 
+        List<OrderProduct> findByClientOrderId(Long orderId);
+
 }
