@@ -6,7 +6,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-
 import java.math.BigDecimal;
 
 @SpringBootTest
@@ -116,16 +115,72 @@ public class FillingTest {
     }
 
     void createProductsForCategory(Category category){
-        for (int i = 1; i<=3; i++){
+        String[] productNames;
+        BigDecimal[] productPrices;
+
+        // Определение продуктов для каждой категории
+        switch (category.getName()) {
+            case "Пицца":
+                productNames = new String[]{"Маргарита", "Пепперони", "Гавайская"};
+                productPrices = new BigDecimal[]{new BigDecimal("300.00"), new BigDecimal("350.00"), new BigDecimal("400.00")};
+                break;
+            case "Классические роллы":
+                productNames = new String[]{"Ролл с сыром и креветкой", "Ролл с лососем", "Ролл с тунцом"};
+                productPrices = new BigDecimal[]{new BigDecimal("200.00"), new BigDecimal("250.00"), new BigDecimal("300.00")};
+                break;
+            case "Запеченные роллы":
+                productNames = new String[]{"Ролл Верона", "Ролл Саппоро", "Ролл Коганэ"};
+                productPrices = new BigDecimal[]{new BigDecimal("200.00"), new BigDecimal("250.00"), new BigDecimal("300.00")};
+                break;
+            case "Сладкие роллы":
+                productNames = new String[]{"Ролл Банан в Шоколаде", "Карамельный ролл", "Клубничный ролл"};
+                productPrices = new BigDecimal[]{new BigDecimal("350.00"), new BigDecimal("200.00"), new BigDecimal("300.00")};
+                break;
+            case "Наборы":
+                productNames = new String[]{"Набор Тигр", "Набор Пикник", "Набор Домино"};
+                productPrices = new BigDecimal[]{ new BigDecimal("600.00"), new BigDecimal("800.00"), new BigDecimal("11000.00")};
+                break;
+            case "Классические бургеры":
+                productNames = new String[]{"Чизбургер", "Гамбругер", "Дабл-Чизбургер"};
+                productPrices = new BigDecimal[]{new BigDecimal("100.00"), new BigDecimal("156.00"), new BigDecimal("215.00")};
+                break;
+            case "Острые бургеры":
+                productNames = new String[]{"Острый чизбургер", "Острый гамбургер", "Острый Дабл-Чизбургер"};
+                productPrices = new BigDecimal[]{new BigDecimal("175.00"), new BigDecimal("200.00"), new BigDecimal("250.00")};
+                break;
+            case "Газированные напитки":
+                productNames = new String[]{"Coca-Cola", "Sprite", "Fanta"};
+                productPrices = new BigDecimal[]{new BigDecimal("76.00"), new BigDecimal("60.00"), new BigDecimal("55.00")};
+                break;
+            case "Энергетические напитки":
+                productNames = new String[]{"Pitbull", "Revo", "Tornado"};
+                productPrices = new BigDecimal[]{new BigDecimal("80.00"), new BigDecimal("57.00"), new BigDecimal("70.00")};
+                break;
+            case "Соки":
+                productNames = new String[]{"Яблочный сок", "Виноградный сок", "Мультифрукт"};
+                productPrices = new BigDecimal[]{new BigDecimal("66.00"), new BigDecimal("78.00"), new BigDecimal("90.00")};
+                break;
+            case "Другие":
+                productNames = new String[]{"Святой источник", "Лимонад", "Чергоноловка"};
+                productPrices = new BigDecimal[]{new BigDecimal("35.00"), new BigDecimal("50.00"), new BigDecimal("40.00")};
+                break;
+
+            default:
+                return;
+        }
+
+        for (int i = 0; i < productNames.length; i++){
             Product product = new Product();
-            product.setName(category.getName() + "продукт" + i);
+            product.setName(productNames[i]); 
             product.setDescription("Описание для " + product.getName());
-            product.setPrice(new BigDecimal(100.0 *i));
+            product.setPrice(productPrices[i]);
+            product.setName(productNames[i]);
+            product.setDescription("Описание для " + product.getName());
+            product.setPrice(productPrices[i]);
             product.setCategory(category);
             productRepository.save(product);
         }
     }
-    
     void createClientsAndOrders() {
         // Создаем тестовые данные
         for (int i = 0; i < 5; i++) {
@@ -161,3 +216,4 @@ public class FillingTest {
         }
     }
 }
+
